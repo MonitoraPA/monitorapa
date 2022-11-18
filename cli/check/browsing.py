@@ -45,6 +45,7 @@ networkLogs = []
 def run(dataset):
     loadAllChecks(dataset, checksToRun)
     cacheDir = getCacheDir(dataset)
+    
     browser = openBrowser(cacheDir)
 
     count = 0
@@ -81,360 +82,10 @@ def run(dataset):
         shutil.rmtree(cacheDir, False)
 
 ## Python checks
-YouTubeHostNames = [
-    ".youtube.ae",
-    ".youtube.at",
-    ".youtube.az",
-    ".youtube.ba",
-    ".youtube.be",
-    ".youtube.bg",
-    ".youtube.bh",
-    ".youtube.bo",
-    ".youtube.by",
-    ".youtube.ca",
-    ".youtube.cat",
-    ".youtube.ch",
-    ".youtube.cl",
-    ".youtube.co",
-    ".youtube.co.ae",
-    ".youtube.co.at",
-    ".youtube.co.cr",
-    ".youtube.co.hu",
-    ".youtube.co.id",
-    ".youtube.co.il",
-    ".youtube.co.in",
-    ".youtube.co.jp",
-    ".youtube.co.ke",
-    ".youtube.co.kr",
-    ".youtube.co.ma",
-    ".youtube.co.nz",
-    ".youtube.co.th",
-    ".youtube.co.tz",
-    ".youtube.co.ug",
-    ".youtube.co.uk",
-    ".youtube.co.ve",
-    ".youtube.co.za",
-    ".youtube.co.zw",
-    ".youtube.com",
-    ".youtube.com.ar",
-    ".youtube.com.au",
-    ".youtube.com.az",
-    ".youtube.com.bd",
-    ".youtube.com.bh",
-    ".youtube.com.bo",
-    ".youtube.com.br",
-    ".youtube.com.by",
-    ".youtube.com.co",
-    ".youtube.com.do",
-    ".youtube.com.ec",
-    ".youtube.com.ee",
-    ".youtube.com.eg",
-    ".youtube.com.es",
-    ".youtube.com.gh",
-    ".youtube.com.gr",
-    ".youtube.com.gt",
-    ".youtube.com.hk",
-    ".youtube.com.hn",
-    ".youtube.com.hr",
-    ".youtube.com.jm",
-    ".youtube.com.jo",
-    ".youtube.com.kw",
-    ".youtube.com.lb",
-    ".youtube.com.lv",
-    ".youtube.com.ly",
-    ".youtube.com.mk",
-    ".youtube.com.mt",
-    ".youtube.com.mx",
-    ".youtube.com.my",
-    ".youtube.com.ng",
-    ".youtube.com.ni",
-    ".youtube.com.om",
-    ".youtube.com.pa",
-    ".youtube.com.pe",
-    ".youtube.com.ph",
-    ".youtube.com.pk",
-    ".youtube.com.pt",
-    ".youtube.com.py",
-    ".youtube.com.qa",
-    ".youtube.com.ro",
-    ".youtube.com.sa",
-    ".youtube.com.sg",
-    ".youtube.com.sv",
-    ".youtube.com.tn",
-    ".youtube.com.tr",
-    ".youtube.com.tw",
-    ".youtube.com.ua",
-    ".youtube.com.uy",
-    ".youtube.com.ve",
-    ".youtube.cr",
-    ".youtube.cz",
-    ".youtube.de",
-    ".youtube.dk",
-    ".youtube.ee",
-    ".youtube.es",
-    ".youtube.fi",
-    ".youtube.fr",
-    ".youtube.ge",
-    ".youtube.gr",
-    ".youtube.gt",
-    ".youtube.hk",
-    ".youtube.hr",
-    ".youtube.hu",
-    ".youtube.ie",
-    ".youtube.in",
-    ".youtube.iq",
-    ".youtube.is",
-    ".youtube.it",
-    ".youtube.jo",
-    ".youtube.jp",
-    ".youtube.kr",
-    ".youtube.kz",
-    ".youtube.lk",
-    ".youtube.lt",
-    ".youtube.lu",
-    ".youtube.lv",
-    ".youtube.ly",
-    ".youtube.ma",
-    ".youtube.me",
-    ".youtube.mk",
-    ".youtube.mx",
-    ".youtube.my",
-    ".youtube.net.in",
-    ".youtube.ng",
-    ".youtube.ni",
-    ".youtube.nl",
-    ".youtube.no",
-    ".youtube.pa",
-    ".youtube.pe",
-    ".youtube.ph",
-    ".youtube.pk",
-    ".youtube.pl",
-    ".youtube.pr",
-    ".youtube.pt",
-    ".youtube.qa",
-    ".youtube.ro",
-    ".youtube.rs",
-    ".youtube.ru",
-    ".youtube.sa",
-    ".youtube.se",
-    ".youtube.sg",
-    ".youtube.si",
-    ".youtube.sk",
-    ".youtube.sn",
-    ".youtube.sv",
-    ".youtube.tn",
-    ".youtube.tv",
-    ".youtube.ua",
-    ".youtube.ug",
-    ".youtube.uy",
-    ".youtube.vn",
-    ".youtube.voto",
-    '.googlevideo.com',
-    '.youtu.be',
-    '.youtube-nocookie.com',
-    '.ytimg.com',
-    '.video-stats.l.google.com',
-    '.youtube.googleapis.com',
-    '.youtubei.googleapis.com',
-    '.ytimg.l.google.com',
-    '.youtube'
-]
 GoogleFontsHostNames = [
     'fonts.googleapis.com',
     'fonts.gstatic.com',
     'themes.googleusercontent',
-]
-AzureHostNames = [
-    '.accesscontrol.windows.net',
-    '.graph.windows.net',
-    '.onmicrosoft.com',
-    ".azure.com",
-    ".azureedge.net",
-    ".azure.net",
-    ".azurerms.com",
-    '.azure-api.net',
-    '.biztalk.windows.net',
-    '.blob.core.windows.net',
-    '.cloudapp.net',
-    '.cloudapp.azure.com',
-    '.azurecr.io',
-    '.azurecontainer.io',
-    '.vo.msecnd.net',
-    '.cosmos.azure.com',
-    '.documents.azure.com',
-    '.file.core.windows.net',
-    '.azurefd.net',
-    '.vault.azure.net',
-    '.management.core.windows.net',
-    '.origin.mediaservices.windows.net',
-    '.azure-mobile.net',
-    '.queue.core.windows.net',
-    '.servicebus.windows.net',
-    '.database.windows.net',
-    '.azureedge.net',
-    '.table.core.windows.net',
-    '.trafficmanager.net',
-    '.azurewebsites.net',
-    '.visualstudio.com',
-    '.windowsazure.com'
-]
-MicrosoftHostNames = [
-    ".aadrm.com",
-    ".acompli.net",
-    ".adbureau.net",
-    ".adecn.com",
-    ".aka.ms",
-    ".aquantive.com",
-    ".aspnetcdn.com",
-    ".assets-yammer.com",
-    ".bing.com",
-    ".clarity.ms",
-    ".cloudapp.net",
-    ".cloudappsecurity.com",
-    ".gamesforwindows.com",
-    ".gaug.es",
-    ".getgamesmart.com",
-    ".gfx.ms",
-    ".github.com",
-    ".github.io",
-    ".githubusercontent.com",
-    ".healthvault.com",
-    ".hockeyapp.net",
-    ".ieaddons.com",
-    ".iegallery.com",
-    ".licdn.com",
-    ".linkedin.com",
-    ".live.com",
-    ".microsoftalumni.com",
-    ".microsoftalumni.org",
-    ".microsoftazuread-sso.com",
-    ".microsoft.com",
-    ".microsoftedgeinsider.com",
-    ".microsoftedgeinsiders.com",
-    ".microsoftonline.com",
-    ".microsoftonline-p.com",
-    ".microsoftonline-p.net",
-    ".microsoftstart.cn",
-    ".microsoftstart.com",
-    ".microsoftstore.com",
-    ".microsoftstream.com",
-    ".msads.net",
-    ".msappproxy.net",
-    ".msauthimages.net",
-    ".msecnd.net",
-    ".msedge.net",
-    ".msftidentity.com",
-    ".msft.net",
-    ".msidentity.com",
-    ".msn.com",
-    ".msndirect.com",
-    ".msocdn.com",
-    ".netconversions.com",
-    ".o365weve.com",
-    ".oaspapps.com",
-    ".office365.com",
-    ".office.com",
-    ".officelive.com",
-    ".office.net",
-    ".onedrive.com",
-    ".onenote.com",
-    ".onenote.net",
-    ".onestore.ms",
-    ".onmicrosoft.com",
-    ".outlook.com",
-    ".outlookmobile.com",
-    ".phonefactor.net",
-    ".roiservice.com",
-    ".sfbassets.com",
-    ".sfx.ms",
-    ".sharepoint.com",
-    ".sharepoint-df.com",
-    ".skypeassets.com",
-    ".skype.com",
-    ".skypeforbusiness.com",
-    ".s-msn.com",
-    ".staffhub.ms",
-    ".sway-cdn.com",
-    ".sway.com",
-    ".sway-extensions.com",
-    ".trafficmanager.net",
-    ".virtualearth.net",
-    ".visualstudio.com",
-    ".windowsphone.com",
-    ".worldwidetelescope.org",
-    ".wunderlist.com",
-    ".xbox.com",
-    ".yammer.com",
-    ".yammerusercontent.com"
-]
-AWSHostNames = [
-    '.amazonaws.com'
-]
-FontAwesomeHostNames = [
-    'use.fontawesome.com'
-]
-FacebookHostNames = [
-    ".atlassolutions.com",
-    ".e.gg",
-    ".facebook.com",
-    ".facebook.de",
-    ".facebook.fr",
-    ".facebook.net",
-    ".fb.com",
-    ".fb.me",
-    ".fbcdn.net",
-    ".friendfeed.com",
-    ".instagram.com",
-    ".internalfb.com",
-    ".messenger.com",
-    ".meta.com",
-    ".oculus.com",
-    ".oversightboard.com",
-    ".whatsapp.com",
-    ".workplace.com",
-    ".apps.fbsbx.com",
-    ".atdmt.com",
-    ".atlassolutions.com",
-    ".facebook.com",
-    ".facebook.de",
-    ".facebook.fr",
-    ".facebook.net",
-    ".fb.com",
-    ".fb.me",
-    ".fbcdn.net",
-    ".fbsbx.com",
-    ".friendfeed.com",
-    ".instagram.com",
-    ".messenger.com"    
-]
-GoogleMapsHostNames = [
-    'maps.googleapis.com'
-]
-GoogleHostedLibrariesHostNames = [
-    'ajax.googleapis.com'
-]
-AdobeHostNames = [
-    ".adobe.com",
-    ".fyre.co",
-    ".livefyre.com",
-    ".typekit.com",
-    ".2o7.net",
-    ".auditude.com",
-    ".demdex.com",
-    ".demdex.net",
-    ".dmtracker.com",
-    ".efrontier.com",
-    ".everestads.net",
-    ".everestjs.net",
-    ".everesttech.net",
-    ".hitbox.com",
-    ".omniture.com",
-    ".omtrdc.net",
-    ".touchclarity.com"
-]
-MoatAds = [
-    ".moat.com",
-    ".moatads.com"
 ]
 FontsExt = [
     '.ttf',
@@ -465,6 +116,7 @@ def eventToEvidence(event):
     return evidence['url']
 
 def checkConnectedHosts(poisonedHosts):
+    global networkLogs
     evidences = []
     for event in networkLogs:
         if event['method'] != 'Network.requestWillBeSent':
@@ -473,16 +125,23 @@ def checkConnectedHosts(poisonedHosts):
         host = url.netloc
         if ':' in host:
             host = host[0:host.index(':')]
+        evidence = eventToEvidence(event)
+        
         if host in poisonedHosts:
-            if host[0] == '.':
-                if url.netloc.endswith(host):
-                    evidences.append(eventToEvidence(event))
-                elif url.netloc == host[1:] :
-                    evidences.append(eventToEvidence(event))
-            elif url.netloc == host:
-                evidences.append(eventToEvidence(event))
+            evidences.append(evidence)
+        else:
+            for phost in poisonedHosts:
+                if phost[0] == '.':
+                    if host.endswith(phost):
+                        evidences.append(evidence)
+                        break
+                    elif host == phost[1:] :
+                        evidences.append(evidence)
+
+                        break
     if len(evidences) == 0:
         return ""
+    
     if len(evidences) > 1:
         evidences = list(set(evidences))
     return json.dumps(evidences)
@@ -500,10 +159,13 @@ def checkCookies(browser):
     return json.dumps(cookies)
 
 def checkGoogleFonts(browser):
+    global networkLogs
     evidences = []
     
     for event in networkLogs:
         if event['method'] != 'Network.requestWillBeSent':
+            continue
+        if event['params']['documentURL'] != browser.current_url:
             continue
         url = urlparse(event['params']['request']['url'])
         host = url.netloc
@@ -523,22 +185,13 @@ def checkGoogleFonts(browser):
         evidences = list(set(evidences))
     return json.dumps(evidences)
 
-def checkAzure(browser):
-    return checkConnectedHosts(AzureHostNames)
-def checkMicrosoft(browser):
-    return checkConnectedHosts(MicrosoftHostNames)
-def checkAWS(browser):
-    return checkConnectedHosts(AWSHostNames)
-def checkFontAwesome(browser):
-    return checkConnectedHosts(FontAwesomeHostNames)
-def checkFacebook(browser):
-    return checkConnectedHosts(FacebookHostNames)
-def checkGoogleMaps(browser):
-    return checkConnectedHosts(GoogleMapsHostNames)
 def checkGoogleReCAPTCHA(browser):
+    global networkLogs
     evidences = []
     for event in networkLogs:
         if event['method'] != 'Network.requestWillBeSent':
+            continue
+        if event['params']['documentURL'] != browser.current_url:
             continue
         url = urlparse(event['params']['request']['url'])
         host = url.netloc
@@ -551,14 +204,6 @@ def checkGoogleReCAPTCHA(browser):
     if len(evidences) > 1:
         evidences = list(set(evidences))
     return json.dumps(evidences)
-def checkGoogleHostedLibraries(browser):
-    return checkConnectedHosts(GoogleHostedLibrariesHostNames)
-def checkTwitter(browser):
-    return checkConnectedHosts(['.twitter.com'])
-def checkAdobe(browser):
-    return checkConnectedHosts(AdobeHostNames)
-def checkYouTube(browser):
-    return checkConnectedHosts(YouTubeHostNames)
 
 ## Check execution
 
@@ -589,9 +234,9 @@ def runChecks(automatism, browser):
             script = jsFramework;        
             allChecks = ""
             for toRun in checksToRun:
-                if checksToRun[toRun]['type'] != 'js':
+                if toRun in results:
                     continue
-                if not (toRun in results): 
+                if checksToRun[toRun]['type'] == 'js':
                     checkCode = checksToRun[toRun]['script']
                     allChecks += singleJSCheck % (toRun, checkCode)
 
@@ -604,6 +249,13 @@ def runChecks(automatism, browser):
             for js in newResults:
                 if newResults[js]['issues'] != None:
                     results[js] = newResults[js]
+        
+        
+        for toRun in checksToRun:
+            if toRun in results:
+                continue
+            if checksToRun[toRun]['type'] == 'py':
+                runPythonCheck(checksToRun, toRun, results, browser)
  
         runPythonChecks('999-', results, browser)
         
@@ -652,56 +304,57 @@ def runChecks(automatism, browser):
             raise BrowserNeedRestartException
     #time.sleep(100000)
 
+def runPythonCheck(checks, toRun, results, browser):
+    if toRun in results:
+        return # nothing to do
+    try:
+        functionToRun = checksToRun[toRun]['function']
+        checkResult = functionToRun(browser)
+        #print(f'{toRun} completed:', checkResult)
+        results[toRun] = {
+            'completed': True,
+            'issues': checkResult
+        }
+    except Exception as err:
+        print(f'{toRun} interrupted:', str(err))
+        raise
+        results[toRun] = {
+            'completed': False,
+            'issues': str(err)
+        }
+    
+
 def runPythonChecks(prefix, results, browser):
     for toRun in checksToRun:
         if not toRun.startswith(prefix):
             continue
         if checksToRun[toRun]['type'] != 'py':
             continue
-        if toRun in results:
-            continue
-        try:
-            functionToRun = checksToRun[toRun]['function']
-            checkResult = functionToRun(browser)
-            #print(f'{toRun} completed:', checkResult)
-            results[toRun] = {
-                'completed': True,
-                'issues': checkResult
-            }
-        except Exception as err:
-            print(f'{toRun} interrupted:', str(err))
-            raise
-            results[toRun] = {
-                'completed': False,
-                'issues': str(err)
-            }
+        runPythonCheck(checksToRun, toRun, results, browser)
 
 def loadAllChecks(dataset, checksToRun):
     
     addPythonCheck(dataset, checksToRun, '000-actual-url', checkActualUrl)
     addPythonCheck(dataset, checksToRun, '000-cookies', checkCookies)
     
-    files = os.listdir('./cli/check/browsing/')
+    files = os.listdir('./cli/check/browsing/js/')
     files = sorted(files)
-    for jsFile in files:
-        addJSCheck(dataset, checksToRun, jsFile)
+    for file in files:
+        #print("loaded js", file)
+        addJSCheck(dataset, checksToRun, file)
+
+    files = os.listdir('./cli/check/browsing/hosts/')
+    files = sorted(files)
+    for file in files:
+        #print("loaded host", file)
+        addHostCheck(dataset, checksToRun, file)
 
     addPythonCheck(dataset, checksToRun, '999-cookies', checkCookies)
-    addPythonCheck(dataset, checksToRun, '999-aws', checkAWS)
-    addPythonCheck(dataset, checksToRun, '999-adobe', checkAdobe)
-    addPythonCheck(dataset, checksToRun, '999-azure', checkAzure)
-    addPythonCheck(dataset, checksToRun, '999-facebook', checkFacebook)
-    addPythonCheck(dataset, checksToRun, '999-fontawesome', checkFontAwesome)
     addPythonCheck(dataset, checksToRun, '999-googlefonts', checkGoogleFonts)
-    addPythonCheck(dataset, checksToRun, '999-googlemaps', checkGoogleMaps)
     addPythonCheck(dataset, checksToRun, '999-googlerecaptcha', checkGoogleReCAPTCHA)
-    addPythonCheck(dataset, checksToRun, '999-microsoft', checkMicrosoft)
-    addPythonCheck(dataset, checksToRun, '999-googlehostedlibraries', checkGoogleHostedLibraries)
-    addPythonCheck(dataset, checksToRun, '999-twitter', checkTwitter)
-    addPythonCheck(dataset, checksToRun, '999-youtube', checkYouTube)
 
 def addJSCheck(dataset, checksToRun, jsFile):
-    jsFilePath = './cli/check/browsing/%s' % jsFile
+    jsFilePath = './cli/check/browsing/js/%s' % jsFile
     #print("jsFilePath %s" % jsFilePath)
     if not (jsFile.endswith('.js') and os.path.isfile(jsFilePath)):
         return # nothing to do
@@ -716,6 +369,31 @@ def addJSCheck(dataset, checksToRun, jsFile):
     checksToRun[jsFile] = {
         'type': 'js',
         'script': js,
+        'output': open(outputFile, "w", buffering=1, encoding="utf-8")
+    }
+
+def hostsToPythonCheck(poisonedHosts):
+    def pythonCheck(browser):
+        return checkConnectedHosts(poisonedHosts)
+    return pythonCheck
+    
+def addHostCheck(dataset, checksToRun, hostsFile):
+    hostsFilePath = './cli/check/browsing/hosts/%s' % hostsFile
+    #print("jsFilePath %s" % jsFilePath)
+    if not (hostsFile.endswith('.hosts') and os.path.isfile(hostsFilePath)):
+        return # nothing to do
+
+    hosts = []
+    with open(hostsFilePath, "r") as f:
+        for line in f:
+            hosts.append(line.strip(" \n\r"))
+    outputFile = check.outputFileName(dataset, 'browsing', hostsFile.replace('.hosts', '.tsv'))
+    directory = os.path.dirname(outputFile)
+    #print("mkdir %s", directory)
+    os.makedirs(directory, 0o755, True)
+    checksToRun[hostsFile] = {
+        'type': 'py',
+        'function': hostsToPythonCheck(hosts),
         'output': open(outputFile, "w", buffering=1, encoding="utf-8")
     }
 
@@ -889,8 +567,11 @@ def openBrowser(cacheDir):
     if os.name == 'nt': # Se viene eseguito su windows
         chrome_path += ".exe"
         driver_path += ".exe"
+        
+        
+    headless=True
     
-    browser = uc.Chrome(options=op, version_main=104, headless=True, browser_executable_path=chrome_path, driver_executable_path=driver_path, enable_cdp_events=True)
+    browser = uc.Chrome(options=op, version_main=104, headless=headless, browser_executable_path=chrome_path, driver_executable_path=driver_path, enable_cdp_events=True)
 
     browser.get('about:blank')
 
@@ -911,6 +592,8 @@ def browseTo(browser, url):
     while len(browser.window_handles) > 1:
         browser.switch_to.window(browser.window_handles[-1])
         browser.delete_all_cookies()
+        browser.execute_cdp_cmd('Network.clearBrowserCache', {})
+        browser.execute_cdp_cmd('Network.clearBrowserCookies', {})
         browser.close()
     browser.switch_to.window(browser.window_handles[0])
     browser.get('about:blank')
