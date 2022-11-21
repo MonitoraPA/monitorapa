@@ -386,7 +386,9 @@ def addHostCheck(dataset, checksToRun, hostsFile):
     hosts = []
     with open(hostsFilePath, "r") as f:
         for line in f:
-            hosts.append(line.strip(" \n\r"))
+            line = line.strip(" \n\r")
+            if len(line) > 3:
+                hosts.append(line)
     outputFile = check.outputFileName(dataset, 'browsing', hostsFile.replace('.hosts', '.tsv'))
     directory = os.path.dirname(outputFile)
     #print("mkdir %s", directory)
