@@ -8,6 +8,7 @@
 
 from lib import check
 import os
+import re
 
 """
 Classi di utilità per l'invio di segnalazioni agli enti in violazione
@@ -139,9 +140,10 @@ def replaceVariables(execution: check.Execution, environment: dict[str, str], co
     for var in environment:
         content = content.replace("${"+var+"}", environment[var])
     for include in includePattern.findall(content):
+        include = include[2:-1]
         if len(include) == 0:
             raise ValueError("empty path in !{}. Content: \n\n" + content)
-        if include[0] = '/' or include[0:2] == '..':
+        if include[0] == '/' or '..' in include:
             raise ValueError("cannot include absolute paths or path out of the working directory: invalid path " + include)
         if not os.path.isfile(include):
             raise ValueError("Cannot find file to include " + include)
