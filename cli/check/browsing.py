@@ -197,7 +197,9 @@ def checkGoogleReCAPTCHA(browser):
         host = url.netloc
         if ':' in host:
             host = host[0:host.index(':')]
-        if host == 'www.google.com' and url.path.startswith('/recaptcha/api.js'):
+        if host.endswith('recaptcha.net'):
+            evidences.append(eventToEvidence(event))
+        elif host == 'www.google.com' and url.path.startswith('/recaptcha/api.js'):
             evidences.append(eventToEvidence(event))
     if len(evidences) == 0:
         return ""
