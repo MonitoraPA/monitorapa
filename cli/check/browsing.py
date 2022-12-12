@@ -30,7 +30,7 @@ from urllib.parse import urlparse
 from datetime import datetime
 
 def usage():
-    print("""
+    eprint("""
 ./cli/check/browsing.py out/$SOURCE/$DATE/dataset.tsv
 
 Where:
@@ -43,6 +43,18 @@ checksToRun = {}
 networkLogs = []
 
 def run(dataset):
+    """
+    Esecuzione dell'osservatorio sul dataset fornito.
+    
+    - carica le verifiche in checkToRun dalle cartelle in cli/check/browsing/
+    - crea una cartella per la cache in out/.../check/browsing/
+    - crea un istanza del browser
+    - apre il dataset e per ogni riga
+      - esegue le verifiche in checkToRun
+    - alla fine (o su un SIGINT o Ctrl+C)
+      - chiude il browser
+      - cancella la cartella della cache
+    """
     loadAllChecks(dataset, checksToRun)
     cacheDir = getCacheDir(dataset)
     
@@ -62,7 +74,7 @@ def run(dataset):
                     continue
 
 
-                print()
+                eprint()
                 print(count, automatism);
                 
                 try:
@@ -75,7 +87,7 @@ def run(dataset):
                 #    browser = restartBrowser(browser, cacheDir)
                 count += 1
     except (KeyboardInterrupt):
-        print("Interrupted at %s" % count)
+        eprint("Interrupted at %s" % count)
     finally:
         browser.quit()
         time.sleep(5)
@@ -94,6 +106,9 @@ FontsExt = [
 ]
 
 def eventToEvidence(event):
+    """
+    Estrae l'evidenza di un trasferimento dall'evento
+    """
     evidence = {}
     if event['method'] == 'Network.requestWillBeSent':
         evidence['url'] = event['params']['request']['url'] 
@@ -115,11 +130,18 @@ def eventToEvidence(event):
         raise ValueError(str(event))
     return evidence['url']
 
-def checkConnectedHosts(poisonedHosts):
+def checkConnectedHosts(browser, poisonedHosts):
+    """
+    Analizza le richieste registrate in network logs alla 
+    ricerca di host compromessi
+    """
     global networkLogs
     evidences = []
     for event in networkLogs:
         if event['method'] != 'Network.requestWillBeSent':
+            continue
+        if event['params']['documentURL'] != browser.current_url:
+            eprint("Ignoring %s from %s" % (event['params']['request']['url'], event['params']['documentURL']))
             continue
         url = urlparse(event['params']['request']['url'])
         host = url.netloc
@@ -147,18 +169,27 @@ def checkConnectedHosts(poisonedHosts):
     return json.dumps(evidences)
 
 def checkActualUrl(browser):
+    """
+    Semplice verifica che riporta semplicemente la url di
+    atterraggio a valle dei vari redirect che possono avvenire
+    all'accesso ad un sito web
+    """
     return browser.current_url
 
 def checkCookies(browser):
-
+    """
+    Verifica che estrae i cookie registrati nel browser.
+    """
     res = browser.execute_cdp_cmd('Network.getAllCookies', {})
-    #cookies = browser.get_cookies()
     cookies = res['cookies']
     if len(cookies) == 0:
         return ""
     return json.dumps(cookies)
 
 def checkGoogleFonts(browser):
+    """
+    Verifica della presenza di trasferimenti verso Google Fonts.
+    """
     global networkLogs
     evidences = []
     
@@ -186,6 +217,9 @@ def checkGoogleFonts(browser):
     return json.dumps(evidences)
 
 def checkGoogleReCAPTCHA(browser):
+    """
+    Verifica della presenza di trasferimenti verso Google reCAPTCHA.
+    """
     global networkLogs
     evidences = []
     for event in networkLogs:
@@ -210,6 +244,21 @@ def checkGoogleReCAPTCHA(browser):
 ## Check execution
 
 def runChecks(automatism, browser):
+    """
+    Esegue le verifiche in checksToRun per la url dell'automatismo.
+    
+    - naviga il browser verso la pagina richiesta
+    - esegue le verifiche python che iniziano con "000-"
+    - esegue le verifiche JavaScript
+      - che possono causare navigazioni fra pagine e quindi
+        ritornare risultati parziali (si veda jsFramework
+    - esegue le altre verifiche python
+    - esegue le verifiche python che iniziano con "999-"
+    - in caso di eccezione registra l'errore per tutte le verifiche successive
+      - se la rete è irraggiungibile, attende il ripristino
+      - in caso di alcune eccezioni può sollevare BrowserNeedRestartException
+        che causerà la sostituzione dell'istanza del browser
+    """
     url = automatism.address
 
     results = {}
@@ -247,7 +296,7 @@ def runChecks(automatism, browser):
         
             newResults = executeInBrowser(browser, script)
 
-            print('script executed:', newResults)
+            #eprint('script executed:', newResults)
             for js in newResults:
                 if newResults[js]['issues'] != None:
                     results[js] = newResults[js]
@@ -270,11 +319,11 @@ def runChecks(automatism, browser):
                 execution.complete(issues, completionTime)
             else:
                 execution.interrupt(issues, completionTime)
-            print("execution of %s:" % js, str(execution))
+            #eprint("execution of %s:" % js, str(execution))
             checksToRun[js]['output'].write(str(execution)+'\n')
             
     except WebDriverException as err:
-        print("WebDriverException of type %s occurred" % err.__class__.__name__, err.msg)
+        eprint("WebDriverException of type %s occurred" % err.__class__.__name__, err.msg)
             
         # un check ha causato una eccezione: 
         # - registro i risultati raccolti
@@ -294,9 +343,9 @@ def runChecks(automatism, browser):
             checksToRun[js]['output'].write(str(execution)+'\n')
 
         if commons.isNetworkDown():
-            print('Network down: waiting...')
+            eprint('Network down: waiting...')
             commons.waitUntilNetworkIsBack()
-            print('Network restored: back to work')
+            eprint('Network restored: back to work')
 
         if err.__class__.__name__ == 'TimeoutException' and 'receiving message from renderer' in err.msg:
             raise BrowserNeedRestartException
@@ -307,18 +356,22 @@ def runChecks(automatism, browser):
     #time.sleep(100000)
 
 def runPythonCheck(checks, toRun, results, browser):
+    """
+    Esegue la verifica toRun (se non già precedentemente eseguita)
+    e salva i risultati in results
+    """
     if toRun in results:
         return # nothing to do
     try:
         functionToRun = checksToRun[toRun]['function']
         checkResult = functionToRun(browser)
-        #print(f'{toRun} completed:', checkResult)
+        #eprint(f'{toRun} completed:', checkResult)
         results[toRun] = {
             'completed': True,
             'issues': checkResult
         }
     except Exception as err:
-        print(f'{toRun} interrupted:', str(err))
+        eprint(f'{toRun} interrupted:', str(err))
         raise
         results[toRun] = {
             'completed': False,
@@ -327,6 +380,10 @@ def runPythonCheck(checks, toRun, results, browser):
     
 
 def runPythonChecks(prefix, results, browser):
+    """
+    Esegue le verifica python in checksToRun che iniziano con il prefisso fornito
+    e salva i risultati in results
+    """
     for toRun in checksToRun:
         if not toRun.startswith(prefix):
             continue
@@ -335,20 +392,37 @@ def runPythonChecks(prefix, results, browser):
         runPythonCheck(checksToRun, toRun, results, browser)
 
 def loadAllChecks(dataset, checksToRun):
+    """
+    Carica in checksToRun le verifiche da effettuare:
     
+    - quelle programmatiche, definite in questo script
+      - checkActualUrl
+      - checkCookies (all'inizio e alla fine)
+      - checkGoogleFonts
+      - checkGoogleReCAPTCHA
+    - quelle JavaScript da ./cli/check/browsing/js/
+    - quelle dipendenti dall'host contattato, da ./cli/check/browsing/js/
+    
+    NOTA BENE: l'ordine è rilevante: le verifiche JS vanno tenute al centro
+    per permettere la registrazione di tutte le richieste analizzate successivamente
+    via Python. 
+    Di particolare rilevanza è ./cli/check/browsing/js/300-consent.js
+    che accetta i tutti i cookie, permettendo il confronto fra prima e dopo
+    l'accettazione.
+    """
     addPythonCheck(dataset, checksToRun, '000-actual-url', checkActualUrl)
     addPythonCheck(dataset, checksToRun, '000-cookies', checkCookies)
     
     files = os.listdir('./cli/check/browsing/js/')
     files = sorted(files)
     for file in files:
-        #print("loaded js", file)
+        #eprint("loaded js", file)
         addJSCheck(dataset, checksToRun, file)
 
     files = os.listdir('./cli/check/browsing/hosts/')
     files = sorted(files)
     for file in files:
-        #print("loaded host", file)
+        #eprint("loaded host", file)
         addHostCheck(dataset, checksToRun, file)
 
     addPythonCheck(dataset, checksToRun, '999-cookies', checkCookies)
@@ -356,8 +430,11 @@ def loadAllChecks(dataset, checksToRun):
     addPythonCheck(dataset, checksToRun, '999-googlerecaptcha', checkGoogleReCAPTCHA)
 
 def addJSCheck(dataset, checksToRun, jsFile):
+    """
+    Registra in checksToRun la verifica JavaScript presente in jsFile
+    """
     jsFilePath = './cli/check/browsing/js/%s' % jsFile
-    #print("jsFilePath %s" % jsFilePath)
+    #eprint("jsFilePath %s" % jsFilePath)
     if not (jsFile.endswith('.js') and os.path.isfile(jsFilePath)):
         return # nothing to do
 
@@ -366,7 +443,7 @@ def addJSCheck(dataset, checksToRun, jsFile):
         js = f.read()
     outputFile = check.outputFileName(dataset, 'browsing', jsFile.replace('.js', '.tsv'))
     directory = os.path.dirname(outputFile)
-    #print("mkdir %s", directory)
+    #eprint("mkdir %s", directory)
     os.makedirs(directory, 0o755, True)
     checksToRun[jsFile] = {
         'type': 'js',
@@ -375,13 +452,22 @@ def addJSCheck(dataset, checksToRun, jsFile):
     }
 
 def hostsToPythonCheck(poisonedHosts):
+    """
+    Restituisce una funzione Python che prende il browser
+    e analizza i log delle richieste registrate in networkLogs
+    per identificare gli host problematici passati
+    """
     def pythonCheck(browser):
-        return checkConnectedHosts(poisonedHosts)
+        return checkConnectedHosts(browser, poisonedHosts)
     return pythonCheck
     
 def addHostCheck(dataset, checksToRun, hostsFile):
+    """
+    Registra in checksToRun la verifica Python relativa alla
+    presenza degli host elenencati in hostFiles.
+    """
     hostsFilePath = './cli/check/browsing/hosts/%s' % hostsFile
-    #print("jsFilePath %s" % jsFilePath)
+    #eprint("jsFilePath %s" % jsFilePath)
     if not (hostsFile.endswith('.hosts') and os.path.isfile(hostsFilePath)):
         return # nothing to do
 
@@ -393,7 +479,7 @@ def addHostCheck(dataset, checksToRun, hostsFile):
                 hosts.append(line)
     outputFile = check.outputFileName(dataset, 'browsing', hostsFile.replace('.hosts', '.tsv'))
     directory = os.path.dirname(outputFile)
-    #print("mkdir %s", directory)
+    #eprint("mkdir %s", directory)
     os.makedirs(directory, 0o755, True)
     checksToRun[hostsFile] = {
         'type': 'py',
@@ -402,12 +488,18 @@ def addHostCheck(dataset, checksToRun, hostsFile):
     }
 
 def countJSChecks(dictionary):
+    """
+    Restituisce il numero di verifiche JavaScript presenti nel dizionario
+    """
     return len([c for c in dictionary if c.endswith('.js')])
 
 def addPythonCheck(dataset, checksToRun, name, pythonFunction):
+    """
+    Registra in checksToRun una verifica python con il nome in `name`
+    """
     outputFile = check.outputFileName(dataset, 'browsing', name + '.tsv')
     directory = os.path.dirname(outputFile)
-    #print("mkdir %s", directory)
+    #eprint("mkdir %s", directory)
     os.makedirs(directory, 0o755, True)
     checksToRun[name] = {
         'type': 'py',
@@ -415,7 +507,7 @@ def addPythonCheck(dataset, checksToRun, name, pythonFunction):
         'output': open(outputFile, "w", buffering=1, encoding="utf-8")
     }
 
-
+# Framework Javascript
 jsFramework = """
 
 if(!Object.hasOwn(window, 'MonitoraPA')){
@@ -424,15 +516,26 @@ if(!Object.hasOwn(window, 'MonitoraPA')){
 }
 
 function monitoraPAWaitForCallback(){
+    /* funzione da invocare prima di effettuare una 
+     * operazione asincrona che determina l'invocazione
+     * di una callback
+     */
 debugger;
     ++window.monitoraPACallbackPending;
 }
 function monitoraPACallbackCompleted(){
+    /* funzione da invocare quando la callback è stata invocata
+     * indipendentemente se con successo o con errore
+     */
 debugger;
     --window.monitoraPACallbackPending;
 }
 
 function monitoraPAClick(element){
+    /* funzione da invocare per effettuare un click su un 
+     * elemento HTML che può causare una navigazione 
+     * (tipicamente button, a, input[type=submit] etc...)
+     */
     monitoraPAWaitForCallback();
     window.setTimeout(function(){
         element.click();
@@ -445,6 +548,8 @@ function monitoraPAClick(element){
 
 window.monitoraPACache = {}
 function monitoraPADownloadResource(uri){
+    /* funzione da invocare per effettuare il download di una risorsa
+     */
     if(Object.hasOwn(window.monitoraPACache, uri)){
         return window.monitoraPACache[uri];
     }
@@ -463,6 +568,10 @@ function monitoraPADownloadResource(uri){
 
 
 function runMonitoraPACheck(results, name, check){
+    /* funzione invocata da browsing.py per eseguire
+     * la verifica check, registrandone il valore di
+     * ritorno in results
+     */
     var issues;
 
     if(window.monitoraPAUnloading == true || window.monitoraPACallbackPending > 0){
@@ -486,12 +595,16 @@ function runMonitoraPACheck(results, name, check){
 }
 """
 
+# Template per l'esecuzione di una singola verifica: il contenuto
+# dei file JS in ./cli/check/browsing/js/ diventa il corpo della
+# funzione passata a runMonitoraPACheck
 singleJSCheck = """
 runMonitoraPACheck(monitoraPAResults, '%s', function(){
 %s
 });
 """
 
+# Template per l'esecuzione delle verifiche Javascript
 runAllJSChecks = """
 function runAllJSChecks(){
 debugger;
@@ -505,11 +618,17 @@ debugger;
 """
 
 
-
 class BrowserNeedRestartException(Exception):
+    """
+    Eccezione sollevata quando è necessario riavviare il browser
+    """
     pass
 
 def executeInBrowser(browser, js):
+    """
+    Esegue il codice js nel browser e ritorna il risultato.
+    In caso di alert che impedisca l'esecuzione, prova a chiuderlo e riprova.
+    """
     #rprint('\n\nexecuting', js)
     try:
         return browser.execute_script(js)
@@ -524,28 +643,11 @@ def executeInBrowser(browser, js):
         return browser.execute_script(js)
 
 
-def removePortLockFile(filename):
-    os.remove(filename)
-
-def tcpPortIsFree(port, cacheDir):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    lockDir = os.path.dirname(cacheDir)
-    result = False
-    try:
-        sock.bind(("127.0.0.1", port))
-        portLockFile = f"{lockDir}/{port}.txt"
-        with open(portLockFile, "x") as f:
-            f.write(cacheDir + "\n")
-        atexit.register(removePortLockFile, portLockFile)
-        result = True
-    except:
-        print("Port is in use")
-    sock.close()
-    return result
-
-
 ## Browser control functions
 def openBrowser(cacheDir):
+    """
+    Avvia il browser con cache in cacheDir.
+    """
     op = uc.ChromeOptions()
     
     op.add_argument('--home='+cacheDir.replace('udd', 'home'))
@@ -571,8 +673,7 @@ def openBrowser(cacheDir):
     if os.name == 'nt': # Se viene eseguito su windows
         chrome_path += ".exe"
         driver_path += ".exe"
-        
-        
+
     headless=True
     
     browser = uc.Chrome(options=op, version_main=104, headless=headless, browser_executable_path=chrome_path, driver_executable_path=driver_path, enable_cdp_events=True)
@@ -589,12 +690,16 @@ def openBrowser(cacheDir):
     return browser
 
 def browseTo(browser, url):
+    """
+    Apre url in un nuovo tab del browser (eventualmente chiudendo i tab aperti su altri indirizzi)
+    """
     # we are in incognito mode: each new tab get a clean state for cheap
     global networkLogs
     networkLogs = []
     
     while len(browser.window_handles) > 1:
         browser.switch_to.window(browser.window_handles[-1])
+        browser.get('about:blank')
         browser.delete_all_cookies()
         browser.execute_cdp_cmd('Network.clearBrowserCache', {})
         browser.execute_cdp_cmd('Network.clearBrowserCookies', {})
@@ -625,10 +730,13 @@ def browseTo(browser, url):
         else:
             raise
     executeInBrowser(browser, "window.addEventListener('unload', e => { window.monitoraPAUnloading = true; }, {capture:true});")
-    #print("browseTo DONE")
+    #eprint("browseTo DONE")
 
 def waitUntilPageLoaded(browser, period=2):
-    #print('waitUntilPageLoaded %s ' % browser.current_url, end='')
+    """
+    Attende che la pagina sia caricata (fino ad un massimo di 60 volte il periodo)
+    """
+    #eprint('waitUntilPageLoaded %s ' % browser.current_url, end='')
     
     readyState = False
     count = 0
@@ -637,10 +745,13 @@ def waitUntilPageLoaded(browser, period=2):
         time.sleep(period)
         readyState = executeInBrowser(browser, 'return document.readyState == "complete" && !window.monitoraPAUnloading && !window.monitoraPACallbackPending;')
         count += 1
-    #print()
+    #eprint()
 
 def restartBrowser(browser, cacheDir):
-    print('restarting Browser: pid %d, dataDir %s' % (browser.service.process.pid, cacheDir))
+    """
+    Riavvia il browser
+    """
+    eprint('restarting Browser: pid %d, dataDir %s' % (browser.service.process.pid, cacheDir))
     process = psutil.Process(browser.service.process.pid)
     tokill = process.children(recursive=True)
     tokill.append(process)
@@ -656,10 +767,16 @@ def restartBrowser(browser, cacheDir):
     return openBrowser(cacheDir)
 
 def collectNetworkLogs(event):
+    """
+    Registra i gli eventi di rete in networkLogs
+    """
     networkLogs.append(event)
-    #print(event)
+    #eprint(event)
 
 def browserReallyNeedARestart(browser):
+    """
+    Naviga una pagina nota per stabilire se il browser necessiti veramente di un riavvio.
+    """
     try:
         browseTo(browser, 'https://monitora-pa.it/tools/ping.html')
     except:
@@ -667,16 +784,23 @@ def browserReallyNeedARestart(browser):
     return False
 
 def getCacheDir(dataset):
+    """
+    Determina la cartella della cache del browser
+    """
     cacheDirsContainer = os.path.dirname(check.outputFileName(dataset, 'browsing', 'user-data-dirs', 'tmp.tsv'))
     os.makedirs(cacheDirsContainer, 0o755, True)
     cacheDir = tempfile.mkdtemp(prefix='udd-%d-' % os.getpid(), dir=cacheDirsContainer)
     return cacheDir
 
-
-
-
-
-
+def eprint(message = "", *args, **kwargs):
+    """
+    print in standard error
+    """
+    if type(message) != str:
+        message = str(message)
+    # ignoriamo caratteri unicode... tanto è debug
+    message = message.encode('ascii', errors='ignore').decode('utf-8')
+    print(message, *args, file=sys.stderr, **kwargs)
 
 
 def main(argv):
@@ -686,7 +810,7 @@ def main(argv):
     dataset = argv[1]
 
     if not os.path.isfile(dataset):
-        print(f"input dataset not found: {dataset}");
+        eprint(f"input dataset not found: {dataset}");
         usage()
         
     run(dataset)
