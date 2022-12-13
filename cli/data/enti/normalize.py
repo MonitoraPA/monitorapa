@@ -8,7 +8,10 @@
 # conditions of the Hacking License (see LICENSE.txt)
 
 import sys
+sys.path.insert(0, '.') # NOTA: da eseguire dalla root del repository git
 import os.path
+
+from lib import commons
 
 def usage():
     print("""
@@ -74,15 +77,13 @@ def main(argv):
                     outf.write('\t'.join([outID, 'Web', webSite]) + '\n')
                 outf.write('\t'.join([outID, 'Email', fields[19]]) + '\n')  
 
-        print(f"[ V ] Done. You can find the dataset at {outFileName}")           
+        print(f"{outFileName}")           
     except IOError as ioe:
-        print(f"[ ERR ]: IOError: {ioe}")
+        commons.eprint(f"IOError: {ioe}")
         usage()
 
 if __name__ == "__main__":
     try:
-        print("[ ℹ️ ] Started normalize.py script")
         main(sys.argv)
     except KeyboardInterrupt:
-        print("[ ERR ] KeyboardInterrupt, aborting")
         sys.exit(1)
