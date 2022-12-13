@@ -5,6 +5,7 @@
 # MonitoraPA is a hack. You can use it according to the terms and
 # conditions of the Hacking License (see LICENSE.txt)
 
+import sys
 import socket
 import time
 
@@ -32,3 +33,12 @@ def waitUntilNetworkIsBack(host='monitora-pa.it'):
         count += 1
     print()
 
+def eprint(message = "", *args, **kwargs):
+    """
+    print to standard error
+    """
+    if type(message) != str:
+        message = str(message)
+    # ignoriamo caratteri unicode... tanto è debug
+    message = message.encode('ascii', errors='ignore').decode('utf-8')
+    print(message, *args, file=sys.stderr, **kwargs)

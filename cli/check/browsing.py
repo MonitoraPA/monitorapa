@@ -30,7 +30,7 @@ from urllib.parse import urlparse
 from datetime import datetime
 
 def usage():
-    eprint("""
+    commons.eprint("""
 ./cli/check/browsing.py out/$SOURCE/$DATE/dataset.tsv
 
 Where:
@@ -74,7 +74,7 @@ def run(dataset):
                     continue
 
 
-                eprint()
+                commons.eprint()
                 print(count, automatism);
                 
                 try:
@@ -87,7 +87,7 @@ def run(dataset):
                 #    browser = restartBrowser(browser, cacheDir)
                 count += 1
     except (KeyboardInterrupt):
-        eprint("Interrupted at %s" % count)
+        commons.eprint("Interrupted at %s" % count)
     finally:
         browser.quit()
         time.sleep(5)
@@ -141,7 +141,7 @@ def checkConnectedHosts(browser, poisonedHosts):
         if event['method'] != 'Network.requestWillBeSent':
             continue
         if event['params']['documentURL'] != browser.current_url:
-            eprint("Ignoring %s from %s" % (event['params']['request']['url'], event['params']['documentURL']))
+            commons.eprint("Ignoring %s from %s" % (event['params']['request']['url'], event['params']['documentURL']))
             continue
         url = urlparse(event['params']['request']['url'])
         host = url.netloc
@@ -296,7 +296,7 @@ def runChecks(automatism, browser):
         
             newResults = executeInBrowser(browser, script)
 
-            #eprint('script executed:', newResults)
+            #commons.eprint('script executed:', newResults)
             for js in newResults:
                 if newResults[js]['issues'] != None:
                     results[js] = newResults[js]
@@ -319,11 +319,11 @@ def runChecks(automatism, browser):
                 execution.complete(issues, completionTime)
             else:
                 execution.interrupt(issues, completionTime)
-            #eprint("execution of %s:" % js, str(execution))
+            #commons.eprint("execution of %s:" % js, str(execution))
             checksToRun[js]['output'].write(str(execution)+'\n')
             
     except WebDriverException as err:
-        eprint("WebDriverException of type %s occurred" % err.__class__.__name__, err.msg)
+        commons.eprint("WebDriverException of type %s occurred" % err.__class__.__name__, err.msg)
             
         # un check ha causato una eccezione: 
         # - registro i risultati raccolti
@@ -343,9 +343,9 @@ def runChecks(automatism, browser):
             checksToRun[js]['output'].write(str(execution)+'\n')
 
         if commons.isNetworkDown():
-            eprint('Network down: waiting...')
+            commons.eprint('Network down: waiting...')
             commons.waitUntilNetworkIsBack()
-            eprint('Network restored: back to work')
+            commons.eprint('Network restored: back to work')
 
         if err.__class__.__name__ == 'TimeoutException' and 'receiving message from renderer' in err.msg:
             raise BrowserNeedRestartException
@@ -365,13 +365,13 @@ def runPythonCheck(checks, toRun, results, browser):
     try:
         functionToRun = checksToRun[toRun]['function']
         checkResult = functionToRun(browser)
-        #eprint(f'{toRun} completed:', checkResult)
+        #commons.eprint(f'{toRun} completed:', checkResult)
         results[toRun] = {
             'completed': True,
             'issues': checkResult
         }
     except Exception as err:
-        eprint(f'{toRun} interrupted:', str(err))
+        commons.eprint(f'{toRun} interrupted:', str(err))
         raise
         results[toRun] = {
             'completed': False,
@@ -416,13 +416,13 @@ def loadAllChecks(dataset, checksToRun):
     files = os.listdir('./cli/check/browsing/js/')
     files = sorted(files)
     for file in files:
-        #eprint("loaded js", file)
+        #commons.eprint("loaded js", file)
         addJSCheck(dataset, checksToRun, file)
 
     files = os.listdir('./cli/check/browsing/hosts/')
     files = sorted(files)
     for file in files:
-        #eprint("loaded host", file)
+        #commons.eprint("loaded host", file)
         addHostCheck(dataset, checksToRun, file)
 
     addPythonCheck(dataset, checksToRun, '999-cookies', checkCookies)
@@ -434,7 +434,7 @@ def addJSCheck(dataset, checksToRun, jsFile):
     Registra in checksToRun la verifica JavaScript presente in jsFile
     """
     jsFilePath = './cli/check/browsing/js/%s' % jsFile
-    #eprint("jsFilePath %s" % jsFilePath)
+    #commons.eprint("jsFilePath %s" % jsFilePath)
     if not (jsFile.endswith('.js') and os.path.isfile(jsFilePath)):
         return # nothing to do
 
@@ -443,7 +443,7 @@ def addJSCheck(dataset, checksToRun, jsFile):
         js = f.read()
     outputFile = check.outputFileName(dataset, 'browsing', jsFile.replace('.js', '.tsv'))
     directory = os.path.dirname(outputFile)
-    #eprint("mkdir %s", directory)
+    #commons.eprint("mkdir %s", directory)
     os.makedirs(directory, 0o755, True)
     checksToRun[jsFile] = {
         'type': 'js',
@@ -467,7 +467,7 @@ def addHostCheck(dataset, checksToRun, hostsFile):
     presenza degli host elenencati in hostFiles.
     """
     hostsFilePath = './cli/check/browsing/hosts/%s' % hostsFile
-    #eprint("jsFilePath %s" % jsFilePath)
+    #commons.eprint("jsFilePath %s" % jsFilePath)
     if not (hostsFile.endswith('.hosts') and os.path.isfile(hostsFilePath)):
         return # nothing to do
 
@@ -475,11 +475,13 @@ def addHostCheck(dataset, checksToRun, hostsFile):
     with open(hostsFilePath, "r") as f:
         for line in f:
             line = line.strip(" \n\r")
+            if line[0] == "#":
+                continue
             if len(line) > 3:
                 hosts.append(line)
     outputFile = check.outputFileName(dataset, 'browsing', hostsFile.replace('.hosts', '.tsv'))
     directory = os.path.dirname(outputFile)
-    #eprint("mkdir %s", directory)
+    #commons.eprint("mkdir %s", directory)
     os.makedirs(directory, 0o755, True)
     checksToRun[hostsFile] = {
         'type': 'py',
@@ -499,7 +501,7 @@ def addPythonCheck(dataset, checksToRun, name, pythonFunction):
     """
     outputFile = check.outputFileName(dataset, 'browsing', name + '.tsv')
     directory = os.path.dirname(outputFile)
-    #eprint("mkdir %s", directory)
+    #commons.eprint("mkdir %s", directory)
     os.makedirs(directory, 0o755, True)
     checksToRun[name] = {
         'type': 'py',
@@ -730,13 +732,13 @@ def browseTo(browser, url):
         else:
             raise
     executeInBrowser(browser, "window.addEventListener('unload', e => { window.monitoraPAUnloading = true; }, {capture:true});")
-    #eprint("browseTo DONE")
+    #commons.eprint("browseTo DONE")
 
 def waitUntilPageLoaded(browser, period=2):
     """
     Attende che la pagina sia caricata (fino ad un massimo di 60 volte il periodo)
     """
-    #eprint('waitUntilPageLoaded %s ' % browser.current_url, end='')
+    #commons.eprint('waitUntilPageLoaded %s ' % browser.current_url, end='')
     
     readyState = False
     count = 0
@@ -745,13 +747,13 @@ def waitUntilPageLoaded(browser, period=2):
         time.sleep(period)
         readyState = executeInBrowser(browser, 'return document.readyState == "complete" && !window.monitoraPAUnloading && !window.monitoraPACallbackPending;')
         count += 1
-    #eprint()
+    #commons.eprint()
 
 def restartBrowser(browser, cacheDir):
     """
     Riavvia il browser
     """
-    eprint('restarting Browser: pid %d, dataDir %s' % (browser.service.process.pid, cacheDir))
+    commons.eprint('restarting Browser: pid %d, dataDir %s' % (browser.service.process.pid, cacheDir))
     process = psutil.Process(browser.service.process.pid)
     tokill = process.children(recursive=True)
     tokill.append(process)
@@ -771,7 +773,7 @@ def collectNetworkLogs(event):
     Registra i gli eventi di rete in networkLogs
     """
     networkLogs.append(event)
-    #eprint(event)
+    #commons.eprint(event)
 
 def browserReallyNeedARestart(browser):
     """
@@ -792,17 +794,6 @@ def getCacheDir(dataset):
     cacheDir = tempfile.mkdtemp(prefix='udd-%d-' % os.getpid(), dir=cacheDirsContainer)
     return cacheDir
 
-def eprint(message = "", *args, **kwargs):
-    """
-    print in standard error
-    """
-    if type(message) != str:
-        message = str(message)
-    # ignoriamo caratteri unicode... tanto è debug
-    message = message.encode('ascii', errors='ignore').decode('utf-8')
-    print(message, *args, file=sys.stderr, **kwargs)
-
-
 def main(argv):
     if len(argv) != 2:
         usage()
@@ -810,7 +801,7 @@ def main(argv):
     dataset = argv[1]
 
     if not os.path.isfile(dataset):
-        eprint(f"input dataset not found: {dataset}");
+        commons.eprint(f"input dataset not found: {dataset}");
         usage()
         
     run(dataset)
