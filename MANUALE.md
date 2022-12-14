@@ -79,17 +79,17 @@ Eseguiamo il download del dataset
 ```
 python3 cli/data/enti/download.py
 ```
-Normalizziamo il dataset, ricorda di aggiustare il comando così da usare la data odierna!
+Normalizziamo il dataset, imposta la data odierna in automatico!
 ```
-python3 cli/data/enti/normalize.py out/enti/2022-07-25/enti.tsv 
+python3 cli/data/enti/normalize.py out/enti/$(date "+%Y-%m-%d")/enti.tsv 
 ```
 In questo punto se vuoi usare firefox come driver invece che chrome esegui il seguente comando
 ```
 export SELECTED_BROWSER=firefox
 ```
-Avviamo il check. Ricorda anche qua di sistemare la data.
+Avviamo il check. Imposta la data odierna in automatico.
 ```
-python3 cli/check/browsing.py out/enti/2022-07-25/dataset.tsv
+python3 cli/check/browsing.py out/enti/$(date "+%Y-%m-%d")/dataset.tsv
 ```
 
 # Sei su Windows e vuoi eseguire l'osservatorio?
