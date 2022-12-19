@@ -9,3 +9,4 @@ Monitora PA. Each file list actual contributors.
 - Andrea Foletto <andrea@yaaaw.it>
 - Pietro Biase <pietro@pietrobiase.it>
 - Marco Marinello <contact+nohuman@marinello.bz.it>
+- Angelo Scarnà <angelo.scarna@codelinsoft.it>
