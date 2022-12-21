@@ -14,7 +14,7 @@ outcome==1.2.0
 pandas==1.5.0
 pdfrw==0.4
 plotly==5.10.0
-psutil
+psutil==5.9.5
 pycparser==2.21
 pyOpenSSL==22.0.0
 PySocks==1.7.1
