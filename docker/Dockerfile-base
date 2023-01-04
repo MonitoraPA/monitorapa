@@ -10,6 +10,8 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
 RUN apt-get update && unzip curl
 RUN apt-get -y install google-chrome-stable
+RUN apt-get -y install python3-venv python3-pip
+
 RUN apt --fix-broken install
 
 CMD /bin/bash
