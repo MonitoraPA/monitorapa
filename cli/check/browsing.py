@@ -2,7 +2,7 @@
 
 # This file is part of MonitoraPA
 #
-# Copyright (C) 2022 Giacomo Tesio <giacomo@tesio.it>
+# Copyright (C) 2022-2023 Giacomo Tesio <giacomo@tesio.it>
 # Copyright (C) 2022 Leonardo Canello <leonardocanello@protonmail.com>
 #
 # MonitoraPA is a hack. You can use it according to the terms and
@@ -17,6 +17,7 @@ from lib import commons, check
 
 import undetected_chromedriver as uc
 from selenium.common.exceptions import WebDriverException, TimeoutException, UnexpectedAlertPresentException, NoAlertPresentException
+from http.client import RemoteDisconnected
 
 import time
 import os
@@ -140,10 +141,17 @@ def checkConnectedHosts(browser, poisonedHosts):
     for event in networkLogs:
         if event['method'] != 'Network.requestWillBeSent':
             continue
-        if event['params']['documentURL'] != browser.current_url:
-            commons.eprint("Ignoring %s from %s" % (event['params']['request']['url'], event['params']['documentURL']))
+        #if event['params']['documentURL'] != browser.current_url:
+        #    commons.eprint("Ignoring %s from %s" % (event['params']['request']['url'], event['params']['documentURL']))
+        #    continue
+        rawUrl = event['params']['request']['url']
+
+        if rawUrl == 'https://monitora-pa.it/tools/ping.html':
+            # vedi browseTo() e browserReallyNeedARestart()
             continue
-        url = urlparse(event['params']['request']['url'])
+
+        url = urlparse(rawUrl)
+
         host = url.netloc
         if ':' in host:
             host = host[0:host.index(':')]
@@ -251,7 +259,8 @@ def runChecks(automatism, browser):
     - esegue le verifiche python che iniziano con "000-"
     - esegue le verifiche JavaScript
       - che possono causare navigazioni fra pagine e quindi
-        ritornare risultati parziali (si veda jsFramework
+        ritornare risultati parziali (si veda jsFramework)
+    - scrolla alla fine della pagina
     - esegue le altre verifiche python
     - esegue le verifiche python che iniziano con "999-"
     - in caso di eccezione registra l'errore per tutte le verifiche successive
@@ -301,6 +310,12 @@ def runChecks(automatism, browser):
                 if newResults[js]['issues'] != None:
                     results[js] = newResults[js]
         
+        scrollToBottom(browser)
+        
+        time.sleep(2)
+        executeInBrowser(browser, 'window.stop()')
+        browser.get("about:black")
+        time.sleep(3)
         
         for toRun in checksToRun:
             if toRun in results:
@@ -321,10 +336,11 @@ def runChecks(automatism, browser):
                 execution.interrupt(issues, completionTime)
             #commons.eprint("execution of %s:" % js, str(execution))
             checksToRun[js]['output'].write(str(execution)+'\n')
-            
+    except RemoteDisconnected as err:
+        commons.eprint("RemoteDisconnected", err.msg)
+        raise BrowserNeedRestartException
     except WebDriverException as err:
         commons.eprint("WebDriverException of type %s occurred" % err.__class__.__name__, err.msg)
-            
         # un check ha causato una eccezione: 
         # - registro i risultati raccolti
         # - registro l'eccezione su tutti i check che non ho potuto eseguire
@@ -595,6 +611,7 @@ function runMonitoraPACheck(results, name, check){
         }
     }
 }
+
 """
 
 # Template per l'esecuzione di una singola verifica: il contenuto
@@ -651,7 +668,6 @@ def openBrowser(cacheDir):
     Avvia il browser con cache in cacheDir.
     """
     op = uc.ChromeOptions()
-    
     op.add_argument('--home='+cacheDir.replace('udd', 'home'))
     op.add_argument('--incognito')
     op.add_argument('--disable-popup-blocking')
@@ -669,26 +685,19 @@ def openBrowser(cacheDir):
     op.add_argument('--disable-offline-load-stale-cache')
     op.add_argument('--disk-cache-size=' + str(5*1024*1024)) # 5MB
     op.add_argument('--no-first-run --no-service-autorun --password-store=basic')
-
     chrome_path = os.path.join(os.getcwd(),'browserBin/chrome/chrome')
     driver_path = os.path.join(os.getcwd(),'browserBin/chromedriver/chromedriver')
     if os.name == 'nt': # Se viene eseguito su windows
         chrome_path += ".exe"
         driver_path += ".exe"
-
     headless=True
-    
     browser = uc.Chrome(options=op, version_main=104, headless=headless, browser_executable_path=chrome_path, driver_executable_path=driver_path, enable_cdp_events=True)
-
     browser.get('about:blank')
-
     browser.add_cdp_listener('Network.requestWillBeSent', collectNetworkLogs)
     #browser.add_cdp_listener('Network.requestWillBeSentExtraInfo', collectNetworkLogs)
     #browser.add_cdp_listener('Network.responseReceived', collectNetworkLogs)
     #browser.add_cdp_listener('Network.responseReceivedExtraInfo', collectNetworkLogs)
     browser.set_page_load_timeout(90)
-        
-    
     return browser
 
 def browseTo(browser, url):
@@ -705,14 +714,30 @@ def browseTo(browser, url):
         browser.delete_all_cookies()
         browser.execute_cdp_cmd('Network.clearBrowserCache', {})
         browser.execute_cdp_cmd('Network.clearBrowserCookies', {})
+        time.sleep(0.5)
         browser.close()
+        
     browser.switch_to.window(browser.window_handles[0])
     browser.get('about:blank')
     browser.execute_cdp_cmd('Network.clearBrowserCache', {})
     browser.execute_cdp_cmd('Network.clearBrowserCookies', {})
     executeInBrowser(browser, "window.open('');")
     browser.switch_to.window(browser.window_handles[-1])
+    
+    browser.get('https://monitora-pa.it/tools/ping.html')
+    while len(networkLogs) > 1:
+        time.sleep(2)
+        networkLogs = []
+        browser.get('about:blank')
+        browser.execute_cdp_cmd('Network.clearBrowserCache', {})
+        browser.execute_cdp_cmd('Network.clearBrowserCookies', {})
+        time.sleep(1)
+        browser.get('https://monitora-pa.it/tools/ping.html')
+
     try:
+        if len(networkLogs) > 1:
+            print("Spurious Network logs: ", networkLogs)
+        networkLogs = []
         browser.get(url)
         needRefresh = executeInBrowser(browser, 'return document.getElementsByTagName("body").length == 0;')
         if needRefresh:
@@ -748,6 +773,30 @@ def waitUntilPageLoaded(browser, period=2):
         readyState = executeInBrowser(browser, 'return document.readyState == "complete" && !window.monitoraPAUnloading && !window.monitoraPACallbackPending;')
         count += 1
     #commons.eprint()
+
+def scrollToBottom(browser):
+    script = """
+function monitoraPAScrollDown(){
+    var initialY = window.scrollY;
+    if (typeof(initialY) !== 'number'){
+        initialY = window.pageYOffset;
+    }
+    window.scrollBy({
+      top: window.innerHeight/2,
+      left: 0,
+      behavior: 'smooth'
+    });
+    return initialY;
+}
+"""
+    initialY = -1
+    newY = 0
+    loops = 0
+    while newY > initialY and loops < 20:
+        initialY = executeInBrowser(browser, script+" return monitoraPAScrollDown()")
+        time.sleep(1)
+        newY = executeInBrowser(browser, "return window.pageYOffset")
+        loops += 1
 
 def restartBrowser(browser, cacheDir):
     """
