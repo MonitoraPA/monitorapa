@@ -1,0 +1,163 @@
+______
+
+This file is part of MonitoraPA
+
+Copyright (C) 2022 Stefano Gazzella <stefano@gdpready.it>
+Copyright (C) 2022 Mario Sabatino <mario@sabatino.pro>
+Copyright (C) 2022-2023 Giacomo Tesio <giacomo@tesio.it>
+
+MonitoraPA is a hack. You can use it according to the terms and
+conditions of the Hacking License (see LICENSE.txt)
+
+Questo notifica le violazioni del GDPR relative all'uso di
+diversi servizi forniti da aziende USA.
+______
+
+Subject: [RIF PA07.${Codice_IPA}] Segnalazione di trasferimenti sistematici di dati personali avviati dal sito ${Sito_istituzionale} verso aziende sottoposte a normative incompatibili con i diritti dei cittadini europei e conseguente invito a risolvere la violazione del Regolamento Europeo 2016/679 (GDPR)
+From: Monitora PA <comunicazioni@pec.monitora-pa.it>
+To: ${Denominazione_ente} <${Mail1}>
+______
+All'attenzione di:
+
+- ${Denominazione_ente}, in qualità di 
+  soggetto titolare del trattamento ai sensi dell'art. 4 par. 1 n. 7 - GDPR.
+
+
+Il sottoscritto Giacomo Tesio, nato a Asti il 29/11/1980 
+(codice fiscale: TSEGCM80S29A479Z), scrive nell'ambito 
+nel progetto Monitora PA (https://monitora-pa.it) e con il 
+sostegno dei cittadini che vi collaborano e delle associazioni
+elencate in calce, eleggendo ai fini del presente atto 
+a domicilio digitale l'indirizzo di posta elettronica 
+certificata comunicazioni@pec.monitora-pa.it, e a domicilio 
+fisico via Aretusa 34, a Milano.
+
+Vogliamo segnalarvi che, tramite l'esecuzione del nostro osservatorio,
+in data $datetime, abbiamo rilevato che il sito web
+del vostro Ente ${Sito_istituzionale} incorpora:
+
+!{$issues}
+
+determinando trasferimenti sistematici non attualmente conformi, 
+in assenza di efficaci misure tecniche supplementari, alle 
+disposizioni del GDPR in ordine al trasferimento transfrontaliero 
+di diversi dati personali dei visitatori, fra cui:
+
+- indirizzo IP
+- User Agent
+- sistema operativo
+- lingue conosciute
+- la visita al vostro sito
+- la data e l'ora di tale visita
+- i dati personali descrittivi deducibili dall'incrocio dei dati 
+  precedenti con i contenuti visualizzati sul vostro sito
+
+Le informazioni inviate durante tali trasferimenti sono più che 
+sufficienti ad identificare il soggetto interessato, tracciarne 
+la navigazione e ad arricchirne il profilo cognitivo-comportamentale.
+
+Come ben noto anche a seguito della sentenza Schrems II della Corte di
+Giustizia dell'Unione Europea, l'uso dei servizi sopra elencati non è 
+attualmente conforme, in assenza di misure tecniche supplementari 
+efficaci che non ci risultano presenti sul vostro sito, alle disposizioni
+del GDPR in ordine al trasferimento transfrontaliero dei dati personali
+verso gli Stati Uniti o altri Paesi la cui legislazione non
+fornisca ai cittadini europei una protezione equivalente
+a quella garantita nell'Unione.
+
+Anche l'EDPB, con le Raccomandazioni 01/2020, ha precisato che si 
+possono trasferire dati personali in tali Paesi utilizzando altre 
+basi legali (come le clausole contrattuali tipo di protezione 
+dei dati) ma solo adottando efficaci misure tecniche supplementari 
+(per esempio la cifratura dei dati personali con chiavi 
+indisponibili ai riceventi) di modo che non sia possibile 
+utilizzare i dati personali in violazione dei diritti
+fondamentali dei cittadini europei al di fuori dell’UE.
+
+Il Garante Austriaco (Datenschutzbehörde) con la decisione 
+D155.027 GA del 22 Dicembre 2021 ha dichiarato l'illegittimità 
+dell'uso di Google Analytics; anche il Garante Francese (CNIL) 
+si è pronunciato nello stesso senso nel febbraio 2022 e, il 
+7 giugno 2022 ha pubblicato delle domande/risposte che 
+forniscono dettagliate informazioni sull'illegittimità 
+dell'uso di Google Analytics e del trasferimento dei dati 
+negli Stati Uniti.
+
+L'Autorità Garante per la Protezione dei dati Personali con 
+Provvedimento del 9 giugno 2022 [docweb n. 9782890] pubblicato 
+il 23 giugno 2022 ha richiamato "all’attenzione di tutti i gestori
+italiani di siti web, pubblici e privati, l’illiceità dei trasferimenti
+effettuati verso gli Stati Uniti attraverso GA" e invitato "tutti i
+titolari del trattamento a verificare la conformità delle modalità di
+utilizzo di cookie e altri strumenti di tracciamento utilizzati sui
+propri siti web, con particolare attenzione a Google Analytics e 
+_ad altri servizi analoghi_, con la normativa in materia di 
+protezione dei dati personali".
+
+I servizi sopra elencati, per la loro modalità di
+funzionamento, costituiscono di fatto strumenti di tracciamento
+e risultano essere in grado di produrre effetti analoghi a 
+Google Analytics, sull'uso del quale il Garante italiano
+si è già pronunciato.
+
+Riteniamo quindi che il mantenimento da parte dell'Ente dei
+trasferimenti di dati personali sopra indicati non siano conformi 
+al disposto normativo vigente, in ragione del trasferimento 
+trasfrontaliero di dati personali e in assenza di una condizione 
+legittimante ai sensi degli artt. 44 e ss. GDPR, e che quindi 
+esponga a rischi ingiustificati tutti i visitatori del
+sito ${Sito_istituzionale}.
+
+Pertanto invitiamo l'Ente in indirizzo a voler provvedere
+alla rimozione dei servizi sopra indicati e di qualsiasi altra risorsa 
+incorporata che produca trasferimenti analoghi, entro il termine di 
+15 giorni dalla ricezione della presente.
+
+In alternativa e negli stessi termini, invitiamo l'Ente ad adottare
+misure tecniche supplementari efficaci a protezione dei dati personali
+dei visitatori, tali che nessun dato (o insieme di dati),
+raggiungendo i server in questione, possa permettere di identificare con
+probabilità non trascurabile un qualsiasi cittadino italiano o europeo.
+
+In difetto di ottemperanza da parte Vostra nei termini su indicati
+agli obblighi di legge in materia di trattamento dei dati personali,
+ci vedremo costretti a inviare una segnalazione al Garante per la
+Protezione dei Dati Personali, ai sensi e per gli effetti
+dell'art. 144 del Codice in materia di protezione dei dati personali
+(DECRETO LEGISLATIVO 30 giugno 2003, n.196 e successive modifiche
+e integrazioni) per una valutazione della Vostra condotta anche ai
+fini dell'emanazione di eventuali provvedimenti di cui
+all'art. 58 del GDPR.
+
+Rimaniamo a disposizione per ulteriori chiarimenti.
+
+
+Con osservanza.
+
+Distinti saluti
+
+
+Milano, 16/01/2023
+
+Giacomo Tesio
+Co-fondatore del progetto Monitora PA
+https://monitora-pa.it
+
+Con il sostegno di:
+
+- Hermes Center, Associazione con sede in Via Aterusa n. 34, 20129
+  Milano, in persona del legale rappresentante p.t Fabio Pietrosanti  
+  C.F. 97621810155 https://www.hermescenter.org/
+- LinuxTrent, Associazione con sede in Via Marconi n. 105, 38057
+  Pergine Valsugana, in persona del legale rappresentante p.t Roberto
+  Resoli C.F. 96100790227 https://www.linuxtrent.it/
+- Open Genova, Associazione con sede in Piazza Matteotti n. 5
+  c/o Mentelocale.it, 16123 Genova, in persona del legale
+  rappresentante  p.t Pietro Biase C.F. 95165570102
+  https://associazione.opengenova.org/
+- AsCII, Associazione con sede in Via del Mare n.108, 80016
+  Marano di Napoli, in persona del legale rappresentante p.t Avvocato
+  Marco Andreoli C.F. 94200750639 https://www.ascii.it/
+- AsSoLi, Associazione con sede in Via San Quintino n. 32, 10121
+  Torino, in persona del legale rappresentante p.t Angelo Raffaele Meo
+  C.F. 94082140487 https://www.softwarelibero.it/
