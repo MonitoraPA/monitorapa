@@ -9,6 +9,7 @@
 from lib import check
 import os
 import re
+import json
 
 """
 Classi di utilità per l'invio di segnalazioni agli enti in violazione
@@ -129,6 +130,12 @@ class Template:
 
 includePattern = re.compile('!{[-._/\w]+}')
 
+
+def naturalSort(l):
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
 def replaceVariables(execution: check.Execution, environment: dict[str, str], content: str) -> str:
     """
     Sostituisce le variabili contenute in content con i valori forniti da environment e automatism
@@ -136,7 +143,11 @@ def replaceVariables(execution: check.Execution, environment: dict[str, str], co
     content = content.replace("$owner", execution.owner)
     content = content.replace("$automatism", execution.address)
     content = content.replace("$datetime", execution.time)
-    content = content.replace("$issues", execution.issues)
+    detectedIssues = execution.issues
+    if detectedIssues.startswith("[") and detectedIssues.endswith("]"):
+        elements = json.loads(detectedIssues)
+        detectedIssues = "    - " + "\n    - ".join(naturalSort(elements))
+    content = content.replace("$issues", detectedIssues)
     for var in environment:
         content = content.replace("${"+var+"}", environment[var])
     for include in includePattern.findall(content):
