@@ -1,0 +1,225 @@
+______
+
+This file is part of MonitoraPA
+
+Copyright (C) 2022 Stefano Gazzella <stefano@gdpready.it>
+Copyright (C) 2023 Giacomo Tesio <giacomo@tesio.it>
+
+MonitoraPA is a hack. You can use it according to the terms and
+conditions of the Hacking License (see LICENSE.txt)
+
+Questo notifica le violazioni del GDPR relative all'uso di
+Web Analytics Italia che al momento dell'invio comporta un
+trasferimento sistematico di dati personali ai server
+di Amazon Web Service, Inc.
+______
+
+Subject: [RIF PA10.${Codice_IPA}] Segnalazione di trasferimenti sistematici di dati personali verso Amazon Web Service Inc. e conseguente invito a risolvere la violazione del Regolamento Europeo 2016/679 (GDPR)
+From: Monitora PA <comunicazioni@pec.monitora-pa.it>
+To: ${Denominazione_ente} <${Mail1}>
+______
+All'attenzione di:
+
+- ${Denominazione_ente}, in qualità di
+  soggetto titolare del trattamento ai sensi dell'art. 4 par. 1 n. 7 - GDPR.
+
+
+Il sottoscritto Giacomo Tesio, nato a Asti il 29/11/1980 
+(codice fiscale: TSEGCM80S29A479Z), nell'ambito nel progetto 
+Monitora PA (https://monitora-pa.it) e con il sostegno delle associazioni
+elencate in calce, eleggendo ai fini del presente atto
+domicilio fisico in via Aretusa 34, a Milano c/o Hermes Center
+e domicilio digitale presso la casella PEC comunicazioni@pec.monitora-pa.it.
+
+1. Tramite l'esecuzione dell'osservatorio di Monitora PA,
+   in data $datetime, ho rilevato che il vostro Ente
+   ${Denominazione_ente}
+   avvia trasferimenti sistematici di dati personali verso 
+   Amazon Web Service, Inc.
+   Tali trasferimenti sono dovuti all'utilizzo di Web Analytics
+   Italia, di cui AgID, Agenzia per l'Italia Digitale, ha recentemente
+   affidato l'esecuzione ai server di Amazon Web Service, Inc.
+
+2. Tale spostamento determina trasferimenti sistematici non attualmente 
+   conformi, in assenza di efficaci misure tecniche supplementari
+   (non attualmente presenti sul vostro sito), alle disposizioni 
+   del GDPR in ordine al trasferimento transfrontaliero
+   di dati personali, fra cui:
+   
+   - indirizzo IP
+   - User Agent
+   - sistema operativo
+   - lingue conosciute
+   - la visita al vostro sito
+   - la data e l'ora di tale visita
+   - i dati personali descrittivi deducibili dall'incrocio dei dati
+     precedenti e dall'interesse per gli specifici contenuti 
+     visualizzati sul vostro sito
+   
+3. Suddetta circostanza può essere verificata facilmente utilizzando
+   uno dei numerosissimi servizi presenti in rete (ad esempio
+   https://webbkoll.dataskydd.net/it/ che permette di individuare anche
+   ulteriori vulnerabilità presenti sul sito stesso) oppure analizzando
+   accuratamente il codice sorgente della pagina web e delle risorse 
+   incorporate tramite l'apposita funzione presente in tutti i principali
+   browser attualmente sul mercato (Firefox, Chrome, Edge).
+
+   Si noteranno alcune chiamate verso il dominio:
+
+   - ingestion.webanalytics.italia.it
+
+   che un semplice DNS lookup rivelerà essere un alias CNAME del dominio
+   
+   - wai-ingestion-nlb-prod-ssl-35ba58bd98996f21.elb.eu-south-1.amazonaws.com
+
+   a sua volta corrispondente ad uno dei server di Amazon Web Service, Inc. 
+
+   Le informazioni inviate durante tali trasferimenti sono più che
+   sufficienti ad identificare il soggetto interessato, tracciarne
+   la navigazione e ad arricchirne il profilo cognitivo-comportamentale.
+
+4. Come ben noto anche a seguito della sentenza Schrems II della Corte di
+   Giustizia dell'Unione Europea, l'uso dei servizi forniti da società
+   statunitensi per il trattamento di dati personali di cittadini europei
+   non è attualmente conforme - in assenza di misure tecniche supplementari 
+   efficaci che non ci risultano indicate sul vostro sito - alle disposizioni
+   del GDPR in ordine al trasferimento transfrontaliero dei dati personali
+   verso gli Stati Uniti o altri Paesi la cui legislazione non
+   fornisca ai cittadini europei una protezione equivalente
+   a quella garantita nell'Unione.
+
+5. Anche l'EDPB, con le Raccomandazioni 01/2020, ha precisato che si possono
+   trasferire dati personali in tali Paesi utilizzando altre basi legali 
+   (come le clausole contrattuali tipo di protezione dei dati) ma solo 
+   adottando efficaci misure tecniche supplementari (per esempio la cifratura
+   dei dati personali con chiavi indisponibili ai riceventi) di modo che non
+   sia possibile utilizzare i dati personali in violazione dei diritti 
+   fondamentali dei cittadini europei al di fuori dell’UE. 
+
+6. Nel documento "2022 Azione esecutiva coordinata - Utilizzo di servizi 
+   basati su cloud da parte del settore pubblico" adottato come raccomandazione
+   il 17 gennaio 2023 l'EDPB ribadisce che: "..l'utilizzo da parte di un ente pubblico 
+   del software fornito dal fornitore di servizi cloud può comportare trasferimenti 
+   verso molte destinazioni che non garantiscono un livello di protezione sostanzialmente 
+   equivalente a quello dell'UE, compresi gli Stati Uniti d'America (USA). 
+   In questi casi, l'ente pubblico - che agisce in qualità di titolare del 
+   trattamento - deve valutare attentamente i trasferimenti che possono essere
+   effettuati per suo conto dal fornitore di servizi cloud, ad esempio identificando 
+   le categorie di dati personali trasferiti, le finalità, i soggetti a cui i
+   dati possono essere trasferiti e il paese terzo coinvolto. 
+   La valutazione dei trasferimenti internazionali di dati personali in atto  
+   dovrebbe essere effettuata prima di impegnarsi con il fornitore di servizi cloud.
+   Gli enti pubblici devono fornire istruzioni all'incaricato del trattamento 
+   per individuare e utilizzare uno strumento di trasferimento adeguato e, se 
+   necessario, per individuare e attuare misure supplementari appropriate che 
+   garantiscano che le garanzie contenute nello strumento di trasferimento 
+   prescelto possano essere rispettate dall'importatore, in modo da assicurare 
+   che il livello di protezione offerto dal GDPR non sia compromesso quando i 
+   dati sono trasferiti a un paese terzo. [...]  
+   Emerge dall'analisi effettuata dalle Autorità che il solo uso di un Cloud
+   Service Provider che sia parte di un gruppo multinazionale soggetto alla
+   normativa di paesi terzi, può risultare nell'applicazione di tale normativa
+   anche a dati salvati nel EEA." [^4]
+
+   Ne consegue che la selezione di una regione europea per l'esecuzione del 
+   servizio di Web Analytics non fornisce, di per sé, alcuna garanzia di 
+   protezione dei dati personali registrati dal Vostro sito.
+   
+7. Inoltre l'AWS Data Processing Addendum [^5] che integra l'AWS Customer Agreement [^6]
+   dichiara esplicitamente di rispettare le normative statunitensi cui
+   Amazon Web Services, Inc (parte dell'accordo, come indicato in premessa) è sottoposta:
+   
+   - al punto 1.4, chiarendo che ogni sottoscrittore rispetterà "_tutte le leggi,
+     le regole e i regolamenti ad esso applicabili e per esso vincolanti_"
+   - al punto 3, chiarendo che "_AWS non accederà, utilizzerà o rivelerà a terze
+     parti i dati del cliente eccetto che per rispettarle la legge o un ordine
+     valido e vincolante di un'agenzia governativa. [...]".
+     Inoltre AWS dichiara che "_se costretta a rivelare dati del cliente ad una
+     agenzia governativa, AWS darà al cliente una ragionevole notifica della
+     richiesta [...] a meno che ciò non sia vietato dalla normativa in questione."
+
+8. Infine L'Autorità Garante per la Protezione dei dati Personali italiana con  
+   Provvedimento del 9 giugno 2022 [docweb n. 9782890], pubblicato il 
+   23 giugno 2022, ha richiamato "_all’attenzione di tutti i gestori italiani 
+   di siti web, pubblici e privati, l’illiceità dei trasferimenti effettuati 
+   verso gli Stati Uniti attraverso GA_" e invitato "_tutti i titolari del 
+   trattamento a verificare la conformità delle modalità di utilizzo di cookie 
+   e altri strumenti di tracciamento utilizzati sui propri siti web, con 
+   particolare attenzione a Google Analytics e ad altri servizi analoghi, 
+   con la normativa in materia di protezione dei dati personali_". 
+
+9. Ritengo quindi che i trasferimenti di dati personali sopra indicati non 
+   siano conformi al disposto normativo vigente - in ragione del trasferimento 
+   trasfrontaliero di dati personali e in assenza di una condizione legittimante 
+   ai sensi degli artt. 44 e ss. GDPR - e che quindi espongano a rischi 
+   ingiustificati tutti gli utenti dei servizi ed i loro corrispondenti.
+
+10. Pertanto, fermo restando il diritto del Vostro Ente di presentare 
+    reclamo all'Autorità Garante per la Protezione dei Dati Personali 
+    qualora AgID rifiuti di ottemperare alla Vostra richiesta, invito 
+    l'Ente in indirizzo ad imporre ad AgID - Agenzia per l'Italia Digitale - 
+    la sostituzione del servizio in questione con altro fornitore non 
+    sottoposto a normative incompatibili con i diritti fondamentali dei 
+    cittadini europei entro 15 giorni dalla ricezione della presente.
+
+11. In alternativa e negli stessi termini, invito l'Ente ad adottare 
+    misure tecniche supplementari efficaci a protezione dei dati personali 
+    tali che nessun dato (o insieme di dati), raggiungendo i server di Amazon, 
+    possa permettere di identificare i visitatori del vostro sito 
+    con probabilità non trascurabile.
+
+12. In difetto di ottemperanza da parte Vostra, nel termine sopra 
+    indicato, agli obblighi di legge in materia di trattamento dei dati 
+    personali, mi vedrò costretto a rivolgermi al Garante per la Protezione 
+    dei Dati Personali, ai sensi e per gli effetti degli artt. 141 e 
+    seguenti del Codice in materia di protezione dei dati personali 
+    (DECRETO LEGISLATIVO 30 giugno 2003, n.196 e successive modifiche 
+    e integrazioni) per una valutazione della Vostra condotta anche 
+    ai fini dell'emanazione di eventuali provvedimenti di cui 
+    all'art. 58 del GDPR.
+
+Rimango a disposizione per ulteriori chiarimenti.
+
+
+Con osservanza.
+
+Distinti saluti
+
+
+Milano, 17/06/2023
+
+
+Giacomo Tesio
+Co-fondatore di Monitora PA
+https://monitora-pa.it
+
+Con il sostegno di:
+
+- Hermes Center, Associazione con sede in Via Aterusa n. 34, 20129
+  Milano, in persona del legale rappresentante p.t Fabio Pietrosanti  
+  C.F. 97621810155 https://www.hermescenter.org/
+- LinuxTrent, Associazione con sede in Via Marconi n. 105, 38057
+  Pergine Valsugana, in persona del legale rappresentante p.t Roberto
+  Resoli C.F. 96100790227 https://www.linuxtrent.it/
+- Open Genova, Associazione con sede in Piazza Matteotti n. 5
+  c/o Mentelocale.it, 16123 Genova, in persona del legale
+  rappresentante  p.t Pietro Biase C.F. 95165570102
+  https://associazione.opengenova.org/
+- AsCII, Associazione con sede in Via del Mare n.108, 80016
+  Marano di Napoli, in persona del legale rappresentante p.t Avvocato
+  Marco Andreoli C.F. 94200750639 https://www.ascii.it/
+- AsSoLi, Associazione con sede in Via San Quintino n. 32, 10121
+  Torino, in persona del legale rappresentante p.t Angelo Raffaele Meo
+  C.F. 94082140487 https://www.softwarelibero.it/
+
+
+________________________________
+
+
+[^1]: https://www.datatilsynet.dk/afgoerelser/afgoerelser/2022/jul/datatilsynet-nedlaegger-behandlingsforbud-i-chromebook-sag-
+[^2]: https://www.baden-wuerttemberg.datenschutz.de/ms-365-schulen-hinweise-weiteres-vorgehen/
+[^3]: https://datenschutzkonferenz-online.de/media/dskb/2022_24_11_festlegung_MS365_abschlussbericht.pdf
+[^4]: https://edpb.europa.eu/system/files/2023-01/edpb_20230118_cef_cloud-basedservices_publicsector_en.pdf
+[^5]: https://d1.awsstatic.com/legal/aws-gdpr/AWS_GDPR_DPA.pdf
+[^6]: http://aws.amazon.com/agreement
+
