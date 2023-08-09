@@ -62,7 +62,7 @@ crea il file ./out/enti/YYYY-MM-YY/dataset.tsv che contiene i seguenti campi
 - Address
 
 Owner è l'identificativo univoco dell'ente all'interno della sorgente dati 
-(il numero di righa se non esiste alcun indentificativo univoco)
+(il numero di riga se non esiste alcun identificativo univoco)
 
 Type può essere uno dei seguenti valori:
 - Web
